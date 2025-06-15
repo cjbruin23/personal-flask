@@ -1,0 +1,1 @@
+| Run `flask --app . run --debug` to run the app in dev mode
