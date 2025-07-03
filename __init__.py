@@ -1,4 +1,5 @@
 import os
+import matplotlib.pyplot as plt
 
 from flask import Flask
 
@@ -22,6 +23,9 @@ def create_app(test_config=None):
 
     @app.route('/')
     def main():
+        plt.plot([1, 2, 3, 4])
+        plt.ylabel('some numbers')
+        plt.savefig('./assets/myImg.svg')
         return 'This is the start of the website'
 
     # a simple page that says hello
