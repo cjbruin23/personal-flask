@@ -2,8 +2,11 @@ import os
 
 import psycopg2
 from flask_cors import CORS
-from flask import Flask
+from flask import Flask, jsonify
 from dotenv import load_dotenv
+
+from database.select import Select
+from models.community import Community
 
 load_dotenv()
 SECRET_KEY = os.environ.get("CONNECTION_STRING")
@@ -18,11 +21,20 @@ def get_db_connection():
 def hello():
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute('SELECT * FROM community;')
+    selectBuilder = Select("*", "community")
+
+    cur.execute(selectBuilder.__str__())
     communities = cur.fetchall()
+
+    communityObjects = []
+    for comm in communities:
+        obj = Community(comm[0], comm[1])
+        modelObject = obj.createJsonObj()
+        communityObjects.append(modelObject)
+
     cur.close()
     conn.close()
-    return 'Hello World!'
+    return communityObjects
 
 @app.route('/community', methods=['GET'])
 def get_all_families():
