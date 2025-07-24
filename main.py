@@ -2,7 +2,7 @@ import os
 
 import psycopg2
 from flask_cors import CORS
-from flask import Flask, jsonify
+from flask import Flask
 from dotenv import load_dotenv
 
 from database.select import Select
@@ -25,12 +25,17 @@ def hello():
 
     cur.execute(selectBuilder.__str__())
     communities = cur.fetchall()
+    colnames = [desc[0] for desc in cur.description]
 
     communityObjects = []
-    for comm in communities:
-        obj = Community(comm[0], comm[1])
-        modelObject = obj.createJsonObj()
-        communityObjects.append(modelObject)
+    for i in range(len(communities)):
+        community = communities[i]
+        data_obj = {}
+        for x in range(len(colnames)):
+            col_name = colnames[x]
+            data_obj[col_name] = community[x]
+
+        communityObjects.append(data_obj)
 
     cur.close()
     conn.close()
