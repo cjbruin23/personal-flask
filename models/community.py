@@ -5,7 +5,7 @@ class Community:
         self.size = size
         self.gdp = gdp
 
-    def createJsonObj(self):
+    def create_json_obj(self):
         x = {
             "id": self.id,
             "name": self.name,
