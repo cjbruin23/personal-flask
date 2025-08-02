@@ -1,4 +1,8 @@
 import csv
+import os
+import psycopg2
+
+from dotenv import load_dotenv
 
 with open('../assets/country_gdp.csv', newline='') as csvfile:
     csv_reader = csv.reader(csvfile, delimiter=',')
@@ -16,14 +20,32 @@ with open('../assets/country_gdp.csv', newline='') as csvfile:
 
         ## Add years to their own row
         if relevant_year_data[0] == '2000':
-            years = row
+            years = relevant_year_data
+            print(years)
             continue
 
-        ## Add the country name and then the yearly gdp data
+        ## Add the country name followed by the yearly gdp data
         relevant_year_data.insert(0, row[0])
-        final_row.append(relevant_year_data)
 
-        final_csv_data.append(final_row)
+        final_csv_data.append(relevant_year_data)
 
-    print(years)
-    print(final_csv_data)
+    print(len(years))
+    print(len(final_csv_data[0]))
+
+    load_dotenv()
+    SECRET_KEY = os.environ.get("CONNECTION_STRING")
+
+    conn = psycopg2.connect(SECRET_KEY)
+
+    curr = conn.cursor()
+
+    curr.execute("SELECT * FROM country_gdp")
+
+    result = curr.fetchone()
+
+    curr.close()
+
+    print(result)
+
+
+    conn.close()
