@@ -4,7 +4,6 @@ import psycopg2
 from flask_cors import CORS
 from flask import Flask
 from dotenv import load_dotenv
-from database.select import Select
 
 load_dotenv()
 SECRET_KEY = os.environ.get("CONNECTION_STRING")
@@ -17,7 +16,6 @@ def get_db_connection():
 
 @app.route("/", methods=['GET'])
 def hello():
-
     return 'Hello'
 
 if __name__ == '__main__':
