@@ -1,4 +1,5 @@
 import csv
+import datetime
 import os
 import psycopg2
 
@@ -29,23 +30,27 @@ with open('../assets/country_gdp.csv', newline='') as csvfile:
 
         final_csv_data.append(relevant_year_data)
 
-    print(len(years))
-    print(len(final_csv_data[0]))
+    print(final_csv_data[1])
 
     load_dotenv()
     SECRET_KEY = os.environ.get("CONNECTION_STRING")
-
     conn = psycopg2.connect(SECRET_KEY)
 
-    curr = conn.cursor()
+    country = final_csv_data[1][0]
 
-    curr.execute("SELECT * FROM country_gdp")
-
-    result = curr.fetchone()
-
-    curr.close()
-
-    print(result)
-
+    for i, item in enumerate(final_csv_data[1][1:]):
+        gdp_date = datetime.date(int(years[i], 10), 1, 1)
+        print(gdp_date)
+        gdp = round(float(item), 3)
+        print(gdp)
+        curr = conn.cursor()
+        curr.execute("""
+            INSERT INTO country_gdp(name, ts, gdp)
+            VALUES (%s, %s, %s);
+            """,
+            (country, gdp_date, gdp)
+        )
+        conn.commit()
+        curr.close()
 
     conn.close()
